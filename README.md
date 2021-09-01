@@ -21,7 +21,7 @@ Simple lightweight Artty Library
 
 ## In javascript part:
 ```js
-const App = createApp({
+const App = Artty.createApp({
     /* state goes here */
     count: 1,
     message: 'Sirawit',

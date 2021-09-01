@@ -1,7 +1,7 @@
 import { createApp } from './artty';
 import { parse, parseDOM } from './parser';
 
-window.Artty = { createApp };
+Window.Artty = { createApp };
 
 export default Artty;
 // window.Appp = createApp({ 
