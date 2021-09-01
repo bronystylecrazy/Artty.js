@@ -1,10 +1,13 @@
 # Artty.js
-Simple lightweight Artty Framework
-
+Simple lightweight Artty Library
+- Very fucking simple library
+- Very lightweight because it's almost nothing
+- Stupid diff algorithm and reactive
+## Import CDN here:
 ```html
 <script src="https://raw.githubusercontent.com/bronystylecrazy/Artty.js/main/dist/artty.js.umd.js"></script>
 ```
-
+## In HTML file:
 ```html
 <div id="app">
     <h1>Hello, { message }</h1> <!-- { expression } uses to empower html-->
@@ -16,7 +19,7 @@ Simple lightweight Artty Framework
 </div>
 ```
 
-
+## In javascript part:
 ```js
 const App = createApp({
     /* state goes here */
