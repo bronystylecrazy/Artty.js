@@ -1,0 +1,2 @@
+function t(){return(t=Object.assign||function(t){for(var n=1;n<arguments.length;n++){var r=arguments[n];for(var e in r)Object.prototype.hasOwnProperty.call(r,e)&&(t[e]=r[e])}return t}).apply(this,arguments)}function n(n){const e=t({},n);for(let t in e)e.hasOwnProperty(t)&&r.bind(this,e,t);return e}function r(t,n){let r=t[n];Object.defineProperty(t,n,{get:()=>r,set(t){r!==t&&(r=t)}})}export{r as observe,n as reactive};
+//# sourceMappingURL=reactive.modern.js.map

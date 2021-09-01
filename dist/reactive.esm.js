@@ -1,0 +1,2 @@
+function r(){return(r=Object.assign||function(r){for(var n=1;n<arguments.length;n++){var t=arguments[n];for(var e in t)Object.prototype.hasOwnProperty.call(t,e)&&(r[e]=t[e])}return r}).apply(this,arguments)}function n(n){var e=r({},n);for(var o in e)e.hasOwnProperty(o)&&t.bind(this,e,o);return e}function t(r,n){var t=r[n];Object.defineProperty(r,n,{get:function(){return t},set:function(r){t!==r&&(t=r)}})}export{t as observe,n as reactive};
+//# sourceMappingURL=reactive.esm.js.map

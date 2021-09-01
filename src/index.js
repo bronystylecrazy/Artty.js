@@ -1,12 +1,14 @@
 import { createApp } from './artty';
 import { parse, parseDOM } from './parser';
 
-window.Appp = createApp({ 
-    id: 1,
-    show: true,
-    message: 'hello',
-    arr: [1,2,3,4,6,7,8,8]
-}).sync('#app');
+
+export default createApp;
+// window.Appp = createApp({ 
+//     id: 1,
+//     show: true,
+//     message: 'hello',
+//     arr: [1,2,3,4,6,7,8,8]
+// }).sync('#app');
 
 // app.render(function(h){
 //     const v = this;

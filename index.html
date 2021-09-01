@@ -9,7 +9,7 @@
 <body>
     <div id="app" (cloak)>
         <h1>HelloWorld</h1>
-        <p (for)="n in id">{id}</p>
+        <p (for)="n in id" :id="n + n.toString()" @click="">{n}</p>
     </div>
 
     

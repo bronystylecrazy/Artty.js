@@ -10,18 +10,19 @@ export const createApp = (state) => {
     return ({
         state: observe(state),
         vnodes: [],
+        template: "",
         $el: null,
         updateList: [],
         sync($s){
             this.$el = document.querySelector($s);
-            var template = `return h('div',${parse(this.$el)})`;
+            this.template = `return h('div',${parse(this.$el)})`;
             const [_,__] = [this.state,this.utils];
-            let vApp = new Function('h','_','__',template)(h,_,__);
+            let vApp = new Function('h','_','__',this.template)(h,_,__);
             let $app = generate(vApp);
             let $rootEl = this.mount($app,this.$el);
             this.state.__handler = (a,b,c,d) => {
                 const [_,__] = [this.state,this.utils];
-                let vNewApp = new Function('h','_','__',template)(h,_,__);
+                let vNewApp = new Function('h','_','__',this.template)(h,_,__);
                 const patch = diff(vApp,vNewApp);
                 $rootEl = patch($rootEl);
                 vApp = vNewApp;
@@ -50,13 +51,10 @@ export const createApp = (state) => {
             l(time, cb){
                 var h = [];
                 if(typeof time === 'number'){
-                    Array.from(Array(time).keys()).forEach(() => h.push(cb(i,i)));
+                    Array.from(Array(time).keys()).forEach((a,i) => h.push(cb(i,i)));
                 }
                 if(Array.isArray(time)){
-                    console.log('loop',time)
-                    var i = 0;
-                    for(var a of time)
-                        h.push(cb(a, i++));
+                    time.forEach((a,i) => h.push(cb(a, i)));
                 }
                 return h;
             },

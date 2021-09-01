@@ -26,7 +26,6 @@ export const parseDirective = ($node, ctx = {}) => {
             return `__.l((${parseExpression($statement.trim(),ctx)}), () => ${parseFromElement($node,ctx)})`;
         var [l,r] = $statement.split(' in ');
         l = l.trim();
-        ctx[l] = true;
         return `__.l((${parseExpression(r,ctx)}), (${l}) => ${parseFromElement($node,ctx)})`;
     }
 
@@ -82,14 +81,21 @@ export const parseText = ($text, ctx = {}) => {
 export const parseExpression = (e, ctx = {}) => {
     // console.log('exp ', ctx)
     var exp = e || '';
-    var $$ = exp.match(/([a-zA-Z_$.][a-zA-Z_$0-9.]*)/ig);
+    var regex = /([a-zA-Z_$.][a-zA-Z_$0-9.]*)/igm;
+    var $$ = exp.matchAll(regex);
     if($$ === null) return exp;
-    for(var $ of $$){
-        if((typeof window[($.split('.')[0] || $)] === 'undefined')){
-            // console.log('exp ',$,ctx)
-            exp = exp.replaceAll($, `_.${$}`);
+    for (let $ of $$) {
+        var variable = $[0];
+        var pos = $.index;
+        if((typeof window[(variable.split('.')[0] || $)] === 'undefined')){
+            exp = exp.substring(0,pos) + exp.substring(pos).replace(variable.split('.')[0],`(_.${variable.split('.')[0]} || ${variable.split('.')[0]})`);
         }
     }
+    // for(var $ of $$){
+    //     if((typeof window[($.split('.')[0] || $)] === 'undefined')){
+    //         console.log($$)
+    //     }
+    // }
     return exp;
 }
 
