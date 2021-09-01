@@ -15,16 +15,18 @@ export const createApp = (state) => {
         sync($s){
             this.$el = document.querySelector($s);
             var template = `return h('div',${parse(this.$el)})`;
-            this.state.__handler = () => this.update();
-            // console.log(new Function('h','_','__',template)(h,this.state,this.utils))
-            this.render(function(h){
-                var _ = this.state;
-                var __ = this.utils;
-                // console.log('UPDATE!')
-                // console.log(`return h('div',${parse(this.$el)})`);
-                console.log(template)
-                return new Function('h','_','__',template)(h,_,__);
-            });
+            const [_,__] = [this.state,this.utils];
+            let vApp = new Function('h','_','__',template)(h,_,__);
+            let $app = generate(vApp);
+            let $rootEl = this.mount($app,this.$el);
+            this.state.__handler = (a,b,c,d) => {
+                const [_,__] = [this.state,this.utils];
+                let vNewApp = new Function('h','_','__',template)(h,_,__);
+                const patch = diff(vApp,vNewApp);
+                $rootEl = patch($rootEl);
+                vApp = vNewApp;
+                this.vnodes = vApp;
+            }
             return this;
         },
         update(){
@@ -32,18 +34,10 @@ export const createApp = (state) => {
             this.$el.removeAttribute('(cloak)');
         },
         render(cb){
-            const vm = {state,utils: this.utils};
-            let vApp = cb.apply(vm,[h, vm]);
-            let $app = generate(vApp);
-            let $rootEl = this.mount($app,this.$el);
-            this.nextTick((state) => {
-                const vm = {state: this.state,utils: this.utils};
-                let vNewApp = cb.apply(vm,[h]);
-                const patch = diff(vApp,vNewApp);
-                $rootEl = patch($rootEl);
-                vApp = vNewApp;
-            });
-            return this;
+            // this.nextTick((state) => {
+                
+            // });
+            // return this;
         },
         nextTick(cb){
             this.updateList.push(cb);

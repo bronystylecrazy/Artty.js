@@ -7,11 +7,15 @@ export const zip = (xs, ys) => {
     return zipped;
 };
 
-export const diffAttribute = (vOldAttr, vNewAttr) => {
+export const diffAttribute = (vNewNode,vOldAttr, vNewAttr) => {
     const patches = [];
     for (const [k, v] of Object.entries(vNewAttr)) {
        patches.push($node => {
-           $node.setAttribute(k, v);
+            try{
+                    $node.setAttribute(k, v);
+            }catch(e){ 
+                // console.error(`invalid directive name ${k}`, e.message);
+            }
            return $node;
        });
     }
@@ -53,32 +57,44 @@ export const diffChildren = (vOldChildren, vNewChildren) => {
     }else{
         for (var i = 0; i < Math.abs(vNewChildren.length - vOldChildren.length); i++) {
             removalPatches.push($node => {
-                $node.removeChild($node.childNodes[$node.children.length+1]);
+                $node.removeChild($node.lastChild);
                 return $node;
             });
         }
     }
 
     return $parent => {
-        for(const [patch, child] of zip(patches, $parent.childNodes)) patch(child);
-        for(const patch of additionalPatches) patch($parent);
-        for(const patch of removalPatches) patch($parent);
+
+
+        for(const [patch, child] of zip(patches, $parent.childNodes)) {
+            patch(child);
+        }
+
+        for(const patch of additionalPatches){
+            patch($parent);
+        }
+
+        for(const patch of removalPatches){
+            patch($parent);
+        }
+
         return $parent;
     };
 };
 
-export const diff = (oldVNode, newVNode) => {
-    if(newVNode === undefined){
+export const diff = (vOldNode, vNewNode) => {
+
+    if(vNewNode === undefined){
         return $node => {
             $node.remove();
             return undefined;
         };
     }
 
-    if(typeof oldVNode === 'string' || typeof newVNode === 'string'){
-        if(oldVNode !== newVNode){
+    if(typeof vOldNode === 'string' || typeof vNewNode === 'string'){
+        if(vOldNode !== vNewNode){
             return $node => {
-                const $newNode = generate(newVNode);
+                const $newNode = generate(vNewNode);
                 $node.replaceWith($newNode);
                 return $newNode;
             };
@@ -87,16 +103,16 @@ export const diff = (oldVNode, newVNode) => {
         }
     }
 
-    if(oldVNode.tag !== newVNode.tag){
+    if(vOldNode.tagName !== vNewNode.tagName){
         return $node => {
-            const $newNode = generate(newVNode);
+            const $newNode = generate(vNewNode);
             $node.replaceWith($newNode);
             return $newNode;
         };
     }
 
-    const patchAttribute = diffAttribute(oldVNode.opts.attrs, newVNode.opts.attrs);
-    const patchChildren = diffChildren(oldVNode.children, newVNode.children);
+    const patchAttribute = diffAttribute(vNewNode,vOldNode.opts.attrs, vNewNode.opts.attrs);
+    const patchChildren = diffChildren(vOldNode.children, vNewNode.children);
 
     return $node => {
         patchAttribute($node);
@@ -104,4 +120,4 @@ export const diff = (oldVNode, newVNode) => {
         // patchKey($node);
         return $node;
     };
-};
+}

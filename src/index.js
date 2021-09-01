@@ -26,12 +26,6 @@ window.Appp = createApp({
 //     ]);
 // });
 
-Appp.render(function(h){
-    var _ = this.state;
-    var __ = this.utils;
-    return h('div',["\n        ",h('H1',{ attrs: {}},["HelloWorld ",__.s(_.arr)," "]),"\n        ",__.l((_.arr), (n) => h('P',{ attrs: {}},[__.s(_.id)])),"\n    "])
-});
-
 // var html = document.getElementById('html');
 // var js = document.getElementById('js');
 
