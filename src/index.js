@@ -1,8 +1,9 @@
 import { createApp } from './artty';
 import { parse, parseDOM } from './parser';
 
+window.Artty = { createApp };
 
-export default createApp;
+export default Artty;
 // window.Appp = createApp({ 
 //     id: 1,
 //     show: true,
