@@ -2,6 +2,10 @@
 Simple lightweight Artty Framework
 
 ```html
+<script src="https://raw.githubusercontent.com/bronystylecrazy/Artty.js/main/dist/artty.js.umd.js"></script>
+```
+
+```html
 <div id="app">
     <h1>Hello, { message }</h1> <!-- { expression } uses to empower html-->
     <h2 (if)="show">Show message</h2> <!-- if-else directives-->
