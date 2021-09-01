@@ -1,27 +1,33 @@
-export const parse = ($target) => {
+export const parse = ($target, d = {}) => {
+    const ctx = { };
     var vnode = [];
     for(var $childNode of $target.childNodes){
         if($childNode.nodeType === Node.TEXT_NODE) {
-            vnode.push(parseFromElement($childNode));
+            vnode.push(parseFromElement($childNode, ctx));
             continue;
         }
         if(!$childNode.hasAttribute('(else)'))
-            vnode.push(parseFromElement($childNode));
+            vnode.push(parseFromElement($childNode, ctx));
     }
     return `[${vnode.join(',')}]`;
 }
 
-export const h = ($node) => {
+export const h = ($node, ctx = {}) => {
+    // console.log('context', ctx);
     if(typeof $node === "undefined" || typeof $node === 'null') return `h()`;
-    return `h('${$node.tagName}',${parseOptions($node)},${parse($node)})`
+    return `h('${$node.tagName}',${parseOptions($node,ctx)},${parse($node,ctx)})`
 };
 
-export const parseDirective = ($node) => {
+export const parseDirective = ($node, ctx = {}) => {
     if($node.hasAttribute('(for)')){
         var $statement = $node.getAttribute('(for)');
-        var [l,r] = $statement.split(' of ');
         $node.removeAttribute('(for)');
-        return `__for((${r}), ${l} => ${parseFromElement($node)})`;
+        if(!$statement.includes(' in '))
+            return `__.l((${parseExpression($statement.trim(),ctx)}), () => ${parseFromElement($node,ctx)})`;
+        var [l,r] = $statement.split(' in ');
+        l = l.trim();
+        ctx[l] = true;
+        return `__.l((${parseExpression(r,ctx)}), (${l}) => ${parseFromElement($node,ctx)})`;
     }
 
     if($node.hasAttribute('(if)')){
@@ -30,33 +36,81 @@ export const parseDirective = ($node) => {
         var $elseNode = $node.nextElementSibling;
         if($elseNode !== null && $elseNode.hasAttribute('(else)')){
             $elseNode.setAttribute('data-elsed', true);
-            return `((${$statement}) ? ${parseFromElement($node)} : ${parseFromElement($elseNode,true)})`;
+            return `((${parseExpression($statement,ctx)}) ? ${parseFromElement($node,ctx)} : ${parseFromElement($elseNode,ctx)})`;
         }
-        return `((${$statement}) ? ${parseFromElement($node)} : ${parseFromElement()})`;
+        return `((${parseExpression($statement,ctx)}) ? ${parseFromElement($node,ctx)} : ${parseFromElement()})`;
     }
 
-    return h($node);
+    return h($node, ctx);
 }
 
-export const parseFromElement = ($node) => {
+export const parseFromElement = ($node, ctx = {}) => {
     if(typeof $node === 'undefined') return h();
     if($node.nodeType === Node.TEXT_NODE){
-        return parseText($node.textContent);
+        return parseText($node.textContent,ctx);
     }
 
-    return parseDirective($node);
+    return parseDirective($node,ctx);
 }
 
-export const parseText = ($text) => {
-    return `'${$node.textContent.replaceAll("\n","\\n")}'`;
+export const parseText = ($text, ctx = {}) => {
+    var text = $text.replaceAll("\n","\\n");
+    var parts = [];
+    var t = "";
+    var p = [];
+    for(var c of text.split('')){
+        
+        if(c === '{'){
+            p.push('{');
+            if(p.length > 0){
+                parts.push(t);
+                t = "{";
+            }
+        }else if(c === '}'){
+            p.pop();
+            if(p.length <= 0){
+                parts.push(t + c);
+                t = "";
+            }
+        }else 
+        t += c;
+    }
+    parts.push(t);
+    return parseReactive(parts.filter(e => e !== ''),ctx);
 }
 
-export const parseOptions = ($node) => {
+export const parseExpression = (e, ctx = {}) => {
+    // console.log('exp ', ctx)
+    var exp = e || '';
+    var $$ = exp.match(/([a-zA-Z_$.][a-zA-Z_$0-9.]*)/ig);
+    if($$ === null) return exp;
+    for(var $ of $$){
+        if((typeof window[($.split('.')[0] || $)] === 'undefined')){
+            // console.log('exp ',$,ctx)
+            exp = exp.replaceAll($, `_.${$}`);
+        }
+    }
+    return exp;
+}
+
+export const parseReactive = (parts, ctx = {}) => {
+    return parts.map(e => {
+        let exp = "";
+        if(e.startsWith('{') && e.endsWith('}')){
+            exp = e.slice(1,e.length-1).trim();
+        }else{
+            return `"${e}"`;
+        }
+        return `__.s(${parseExpression(exp,ctx)})`;
+    }).join(",");
+}
+
+export const parseOptions = ($node, ctx = {}) => {
     var attrs = [];
     if($node.attributes.length > 0){
         for(var {name,value} of $node.attributes){
             if(name.includes(':'))
-                attrs.push(`'${name.slice(1)}': ${value}`);
+                attrs.push(`'${name.slice(1)}': ${parseExpression(value,ctx)}`);
             else
                 attrs.push(`'${name}': '${value}'`);
         }
@@ -65,12 +119,11 @@ export const parseOptions = ($node) => {
 }
 
 
-export const parseDOM = ($html) => {
+export const parseDOM = ($html, ctx = {}) => {
     try{
         const data = new DOMParser().parseFromString($html,'text/html').body;
         return data;
     }catch(e){
         throw new Error("Parsing DOM error!");
-        return null;
     }
 }

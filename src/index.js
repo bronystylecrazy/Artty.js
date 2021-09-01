@@ -1,10 +1,12 @@
 import { createApp } from './artty';
 import { parse, parseDOM } from './parser';
-// const app = createApp({ 
-//     id: 1,
-//     show: true,
-//     arr: [1,2,3,4,6,7,8,8]
-// }).sync('#app');
+
+window.Appp = createApp({ 
+    id: 1,
+    show: true,
+    message: 'hello',
+    arr: [1,2,3,4,6,7,8,8]
+}).sync('#app');
 
 // app.render(function(h){
 //     const v = this;
@@ -24,16 +26,17 @@ import { parse, parseDOM } from './parser';
 //     ]);
 // });
 
-// app.render(function(h){
-//     return h('b',['hello']);
-// });
-
-var html = document.getElementById('html');
-var js = document.getElementById('js');
-
-html.addEventListener('input', function(e){
-    js.value = parse(parseDOM(e.target.value));
-
+Appp.render(function(h){
+    var _ = this.state;
+    var __ = this.utils;
+    return h('div',["\n        ",h('H1',{ attrs: {}},["HelloWorld ",__.s(_.arr)," "]),"\n        ",__.l((_.arr), (n) => h('P',{ attrs: {}},[__.s(_.id)])),"\n    "])
 });
 
-console.log(parse(document.getElementById('hello')));
+// var html = document.getElementById('html');
+// var js = document.getElementById('js');
+
+// html.addEventListener('input', function(e){
+//     js.value = parse(parseDOM(e.target.value));
+// });
+
+// console.log(parse(document.getElementById('hello')));

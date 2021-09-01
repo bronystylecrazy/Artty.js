@@ -53,7 +53,7 @@ export const diffChildren = (vOldChildren, vNewChildren) => {
     }else{
         for (var i = 0; i < Math.abs(vNewChildren.length - vOldChildren.length); i++) {
             removalPatches.push($node => {
-                $node.removeChild($node.childNodes[$node.children.length]);
+                $node.removeChild($node.childNodes[$node.children.length+1]);
                 return $node;
             });
         }
