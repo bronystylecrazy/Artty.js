@@ -17,13 +17,12 @@ export const h = ($node, ctx = {}) => {
 };
 
 export const parseDirective = ($node, ctx = {}) => {
-
     if($node.hasAttribute('(for)')){
         var $statement = $node.getAttribute('(for)');
         $node.removeAttribute('(for)');
         $statement = $statement.trim();
         if(!$statement.includes(' in '))
-            return `__.l((${parseExpression($statement.trim(),ctx)}), () => ${parseFromElement($node,ctx)})`;
+            return `__.l((${parseExpression($statement.trim(),ctx, true)}), () => ${parseFromElement($node,ctx)})`;
         var [l,r] = $statement.split(' in ');
         l = l.trim();
         return `__.l((${parseExpression(r,ctx)}), function(${l}){return ${parseFromElement($node,ctx)}},'${l}')`;
@@ -131,6 +130,7 @@ export const parseReactive = (parts, ctx = {}) => {
 export const parseOptions = ($node, ctx = {}) => {
     var attrs = [];
     var on = [];
+    var key = 'null';
 
     if($node.attributes.length > 0){
         for(var {name,value} of $node.attributes){
@@ -142,6 +142,11 @@ export const parseOptions = ($node, ctx = {}) => {
                     attrs.push(`value: ${parseExpression(value.trim(),ctx,true)}`)
                 on.push(`'input': function($event){ ${parseExpression(value.trim(),ctx,true)} = $event.target.${['checkbox'].includes(v) ? 'checked' : 'value'}; }`);
                 continue;
+            }
+
+            if(name.includes('(key)')){
+                key = parseExpression(value.trim(),ctx,true);
+                $node.removeAttribute('(key)');
             }
 
             if(name.includes(':'))
@@ -159,7 +164,7 @@ export const parseOptions = ($node, ctx = {}) => {
     }
     var attr = `attrs: {${attrs.join(',')}}`;
     var on = `on: {${on.join(',')}}`;
-    return `{${attr}, ${on} }`;
+    return `{key: ${key},${attr}, ${on} }`;
 }
 
 export const parseMethod = (value, ctx) => {

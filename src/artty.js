@@ -72,6 +72,11 @@ const createApp = (state) => {
                         });
                     }
                 }
+                if(typeof time === 'number'){
+                    Array.from(Array(Math.max(0,+time)).keys()).forEach((a,i) => {
+                        return h.push(cb.call({[n]: a},a,a))
+                    });
+                }
                 if(Array.isArray(time)){
                     time.forEach((a,i) => h.push(cb.call({[n]: a},a, i)));
                 }

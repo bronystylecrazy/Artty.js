@@ -8,17 +8,9 @@
 </head>
 <body>
     <div id="app">
-        <div>
             <h2>{message}</h2>
-            <input type="checkbox" (model)="show">
-            <input (if)="show" type="text" (model)="message" placeholder="{message}">
-            <input (if)="show" type="text" (model)="message" placeholder="{message}">
-            <input (if)="show" type="text" (model)="message" placeholder="{message}">
-            <input (if)="show" type="text" (model)="message" placeholder="{message}">
-            <h1>{ count }</h1>
-            <button (for)="x in count" @click="alert(x)"> click {x}</button>
-        </div>
-        <input type="number" (model)="count"/>
+            <p (for)="n in message.length" (key)="n">{message}</p>
+            <input type="text" (model)="message">
     </div>
     <script type="module" src="./src/index.js"></script>
     <script type="module">

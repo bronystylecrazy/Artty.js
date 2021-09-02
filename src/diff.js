@@ -1,4 +1,6 @@
 import { generate } from "./generator";
+import { addListener, removeAllListeners} from './event';
+
 export const zip = (xs, ys) => {
     const zipped = [];
     for (var i = 0; i < Math.min(xs.length, ys.length); i++) {
@@ -7,22 +9,46 @@ export const zip = (xs, ys) => {
     return zipped;
 };
 
-export const diffEvent = (vOldOn, vNewOn) => {
+export const diffEvent = (vNode,vOldOn, vNewOn) => {
     const patches = [];
-    // Object.entries(vNewAttr)
+    for (const k in vOldOn) {
+        if(!(k.trim() in vNewOn)) {
+            patches.push($node => {
+                removeAllListeners($node,k.trim());
+                return $node;
+            });
+        }
+    }
+
+    for (const [k, v] of Object.entries(vNewOn)) {
+        patches.push($node => {
+            addListener($node,k,function($event){
+                var c = v($event);
+                if(typeof c === 'function'){
+                    c.call(this,$event);
+                }
+            }, false);
+            return $node;
+        });
+    }
+    
     return $node => {
-        
+        for(var patch of patches) {
+            patch($node);
+        }
     };
 };
 
 export const diffAttribute = (vNewNode,vOldAttr, vNewAttr) => {
     const patches = [];
+    // console.log(vNewNode, vOldAttr, vNewAttr)
     for (const [k, v] of Object.entries(vNewAttr)) {
        patches.push($node => {
             try{
-                if(['value','checked'].includes(k.trim().toLowerCase()))
+                if(['value','checked'].includes(k.trim().toLowerCase())){
                     $node[k] = v;
-                else $node.setAttribute(k, v);
+                }else
+                    $node.setAttribute(k, v);
             }catch(e){ 
                 // console.error(`invalid directive name ${k}`, e.message);
             }
@@ -31,8 +57,10 @@ export const diffAttribute = (vNewNode,vOldAttr, vNewAttr) => {
     }
 
     for (const k in vOldAttr) {
-        if(!(k in vOldAttr)) {
+        if(!(k in vNewAttr)) {
             patches.push($node => {
+                if(['value','checked'].includes(k.trim().toLowerCase()))
+                    $node[k] = "";
                 $node.removeAttribute(k);
                 return $node;
             });
@@ -45,9 +73,7 @@ export const diffAttribute = (vNewNode,vOldAttr, vNewAttr) => {
         }
     };
 };
-
 export const diffChildren = (vOldChildren, vNewChildren) => {
-
     const patches = [];
     const additionalPatches = [];
     const removalPatches = [];
@@ -91,18 +117,14 @@ export const diffChildren = (vOldChildren, vNewChildren) => {
         return $parent;
     };
 };
-
 export const diff = (vOldNode, vNewNode) => {
-
-
-
-    if(vNewNode === undefined){
+    // console.log(vOldNode, vNewNode)
+    if(vNewNode === undefined || vNewNode === null){
         return $node => {
             $node.remove();
             return undefined;
         };
     }
-
     if(typeof vOldNode === 'string' || typeof vNewNode === 'string'){
         if(vOldNode !== vNewNode){
             return $node => {
@@ -114,7 +136,6 @@ export const diff = (vOldNode, vNewNode) => {
             return $node => undefined;
         }
     }
-
     if(vOldNode.tag !== vNewNode.tag){
         return $node => {
             const $newNode = generate(vNewNode);
@@ -122,10 +143,9 @@ export const diff = (vOldNode, vNewNode) => {
             return $newNode;
         };
     }
-
-    const patchAttribute = diffAttribute(vNewNode,vOldNode.opts.attrs, vNewNode.opts.attrs);
     const patchChildren = diffChildren(vOldNode.children, vNewNode.children);
-    const patchEvent = diffEvent(vOldNode.opts.on, vNewNode.opts.on);
+    const patchAttribute = diffAttribute(vNewNode,vOldNode.opts.attrs, vNewNode.opts.attrs);
+    const patchEvent = diffEvent(vNewNode,vOldNode.opts.on, vNewNode.opts.on);
     return $node => {
         patchAttribute($node);
         patchChildren($node);
