@@ -7,12 +7,20 @@ export const zip = (xs, ys) => {
     return zipped;
 };
 
+export const diffEvent = (vOldOn, vNewOn) => {
+    const patches = [];
+    // Object.entries(vNewAttr)
+    return $node => {
+        
+    };
+};
+
 export const diffAttribute = (vNewNode,vOldAttr, vNewAttr) => {
     const patches = [];
     for (const [k, v] of Object.entries(vNewAttr)) {
        patches.push($node => {
             try{
-                    $node.setAttribute(k, v);
+                $node.setAttribute(k, v);
             }catch(e){ 
                 // console.error(`invalid directive name ${k}`, e.message);
             }
@@ -83,7 +91,6 @@ export const diffChildren = (vOldChildren, vNewChildren) => {
 };
 
 export const diff = (vOldNode, vNewNode) => {
-
     if(vNewNode === undefined){
         return $node => {
             $node.remove();
@@ -113,11 +120,11 @@ export const diff = (vOldNode, vNewNode) => {
 
     const patchAttribute = diffAttribute(vNewNode,vOldNode.opts.attrs, vNewNode.opts.attrs);
     const patchChildren = diffChildren(vOldNode.children, vNewNode.children);
-
+    const patchEvent = diffEvent(vOldNode.opts.on, vNewNode.opts.on);
     return $node => {
         patchAttribute($node);
         patchChildren($node);
-        // patchKey($node);
+        patchEvent($node);
         return $node;
     };
 }

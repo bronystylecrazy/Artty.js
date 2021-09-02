@@ -1,11 +1,12 @@
 import h from './h';
 import { diff } from './diff';
 import { generate } from './generator';
-import { parse } from './parser';
+import * as parser from './parser';
 import reactive from './reactive';
-export const hyperactiv = reactive;
 
-export const createApp = (state) => {
+const hyperactiv = reactive;
+
+const createApp = (state) => {
     return ({
         state: reactive.observe(state),
         vnodes: [],
@@ -28,16 +29,15 @@ export const createApp = (state) => {
         },
         sync($s){
             this.$el = document.getElementById($s);
-            this.template = `return h('div',${parse(this.$el)})`;
+            this.template = `let v={};return h('div',${parser.parse(this.$el,this.state)})`;
             this.$emit('created',this);
             const [_,__] = [this.state,this.utils];
-            let vApp = new Function('h','_','__',this.template)(h,_,__);
+            let vApp = new Function('h','_','__',...Object.keys(_),this.template)(h,_,__,...Object.values(_));
             let $app = generate(vApp);
             let $rootEl = this.mount($app,this.$el);
             this.$emit('mounted',this);
             reactive.computed(() => {
-                const [_,__] = [this.state,this.utils];
-                let vNewApp = new Function('h','_','__',this.template)(h,_,__);
+                let vNewApp = new Function('h','_','__',...Object.keys(_),this.template)(h,_,__,...Object.values(_));
                 const patch = diff(vApp,vNewApp);
                 $rootEl = patch($rootEl);
                 vApp = vNewApp;
@@ -63,13 +63,15 @@ export const createApp = (state) => {
             return $node;
         },
         utils: {
-            l(time, cb){
+            l(time, cb, n){
                 var h = [];
                 if(typeof time === 'number'){
-                    Array.from(Array(time).keys()).forEach((a,i) => h.push(cb(i,i)));
+                    Array.from(Array(time).keys()).forEach((a,i) => {
+                        return h.push(cb.call({[n]: a},a,a))
+                    });
                 }
                 if(Array.isArray(time)){
-                    time.forEach((a,i) => h.push(cb(a, i)));
+                    time.forEach((a,i) => h.push(cb.call({[n]: a},a, i)));
                 }
                 return h;
             },
@@ -77,7 +79,23 @@ export const createApp = (state) => {
                 if(typeof t === 'undefined') return "";
                 if(typeof t === 'object') return JSON.stringify(t);
                 return String(t);
-            }
+            },
+            a(t){
+                if(typeof t === 'object'){
+                    var a = [];
+                    for(var o in t){
+                        if(t[o]) a.push(o);
+                    }
+                    return a.join(' ');
+                }
+                return String(t);
+            },
         }
     });
 };
+
+export {
+    createApp,
+    hyperactiv,
+    parser
+}

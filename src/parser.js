@@ -1,5 +1,4 @@
-export const parse = ($target, d = {}) => {
-    const ctx = { };
+export const parse = ($target, ctx = {}) => {
     var vnode = [];
     for(var $childNode of $target.childNodes){
         if($childNode.nodeType === Node.TEXT_NODE) {
@@ -21,18 +20,19 @@ export const parseDirective = ($node, ctx = {}) => {
     if($node.hasAttribute('(for)')){
         var $statement = $node.getAttribute('(for)');
         $node.removeAttribute('(for)');
+        $statement = $statement.trim();
         if(!$statement.includes(' in '))
             return `__.l((${parseExpression($statement.trim(),ctx)}), () => ${parseFromElement($node,ctx)})`;
         var [l,r] = $statement.split(' in ');
         l = l.trim();
-        return `__.l((${parseExpression(r,ctx)}), (${l}) => ${parseFromElement($node,ctx)})`;
+        return `__.l((${parseExpression(r,ctx)}), function(${l}){ console.log('${$node.tagName}',${l}); return ${parseFromElement($node,ctx)}},'${l}')`;
     }
 
     if($node.hasAttribute('(if)')){
         var $statement = $node.getAttribute('(if)');
         $node.removeAttribute('(if)')
         var $elseNode = $node.nextElementSibling;
-        if($elseNode !== null && $elseNode.hasAttribute('(else)')){
+        if((typeof $elseNode !== 'undefined' || typeof $elseNode !== 'null') && $elseNode.hasAttribute('(else)')){
             $elseNode.setAttribute('data-elsed', true);
             return `((${parseExpression($statement,ctx)}) ? ${parseFromElement($node,ctx)} : ${parseFromElement($elseNode,ctx)})`;
         }
@@ -78,7 +78,7 @@ export const parseText = ($text, ctx = {}) => {
     return parseReactive(parts.filter(e => e !== ''),ctx);
 }
 
-export const parseExpression = (e, ctx = {}) => {
+export const parseExpression = (e, ctx = {}, wrap = false) => {
     var exp = e || '';
     var regex = /([a-zA-Z_$.][a-zA-Z_$0-9.]*)/igm;
     var $$ = exp.matchAll(regex);
@@ -86,8 +86,27 @@ export const parseExpression = (e, ctx = {}) => {
     for (let $ of $$) {
         var variable = $[0];
         var pos = $.index;
-        if((typeof window[(variable.split('.')[0] || $)] === 'undefined')){
-            exp = exp.substring(0,pos) + exp.substring(pos).replace(variable.split('.')[0],`(_.${variable.split('.')[0]} || ${variable.split('.')[0]})`);
+        var vname = variable.split('.')[0];
+        var v = vname || $;
+        if((typeof window[v] === 'undefined' && typeof ctx[v] === 'undefined')){
+            exp = exp.substring(0,pos) + exp.substring(pos).replace(vname,`${vname}`);
+        }else 
+        if(wrap){
+            // let left = pos;
+            // let right = pos + vname.length;
+            // var lbc = 0, rbc = 0;
+            // while(left >= 0 && right < exp.length){
+            //     if(['\`','\'','\"'].includes(exp[left])) lbc++;
+            //     if(['\`','\'','\"'].includes(exp[right])) right++;
+            //     left--;
+            //     right++;
+            // }
+            var isInString = false;
+            for(var i = 0; i < pos; i++){
+                if(['\`','\'','\"'].includes(exp[i])) isInString = !isInString;
+            }
+            if(!isInString)
+                exp = exp.substring(0,pos) + exp.substring(pos).replace(vname,`_.${vname}`);
         }
     }
     return exp;
@@ -96,6 +115,7 @@ export const parseExpression = (e, ctx = {}) => {
 export const parseReactive = (parts, ctx = {}) => {
     return parts.map(e => {
         let exp = "";
+        e = e.trim();
         if(e.startsWith('{') && e.endsWith('}')){
             exp = e.slice(1,e.length-1).trim();
         }else{
@@ -107,17 +127,30 @@ export const parseReactive = (parts, ctx = {}) => {
 
 export const parseOptions = ($node, ctx = {}) => {
     var attrs = [];
+    var on = [];
+
     if($node.attributes.length > 0){
         for(var {name,value} of $node.attributes){
             if(name.includes(':'))
-                attrs.push(`'${name.slice(1)}': ${parseExpression(value,ctx)}`);
-            else
-                attrs.push(`'${name}': '${value}'`);
+                attrs.push(`'${name.slice(1)}': __.a(${parseExpression(value,ctx)})`);
+            else if (name.includes('@')){
+                on.push(`'${name.slice(1)}': ${parseMethod(value, ctx)}`);
+            }else{
+                if(value.startsWith('{') && value.endsWith('}')){
+                    attrs.push(`'${name}': __.a(${parseExpression(value.slice(1,value.length-1),ctx)})`);
+                }else{
+                    attrs.push(`'${name}': '${value}'`);
+                }
+            }
         }
     }
-    return `{ attrs: {${attrs.join(',')}}}`;
+
+    return `{ attrs: {${attrs.join(',')}}, on: {${on.join(',')}}}`;
 }
 
+export const parseMethod = (value, ctx) => {
+    return `function($event){ return ${parseExpression(value,ctx,true)}}`;
+};
 
 export const parseDOM = ($html, ctx = {}) => {
     try{
@@ -127,3 +160,7 @@ export const parseDOM = ($html, ctx = {}) => {
         throw new Error("Parsing DOM error!");
     }
 }
+
+export const compile = ($html) => {
+    return parse(parseDOM($html));
+};

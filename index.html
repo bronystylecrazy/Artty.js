@@ -7,10 +7,32 @@
     <title>Vite - Artty.js build</title>
 </head>
 <body>
+    <div id="app">
+        <h1 (if)="show">{message} {count}</h1>
+        <h2 (else)>hiii</h2>
+        <p (for)="n in count">asdasd {n}</p>
+        <b :class='{bg: show}'>Hellooo </b>
+        <input> 
+        <button (for)="x in 4" @click="alert(x)"> click {x}</button>
+    </div>
     <script type="module" src="./src/index.js"></script>
     <script type="module">
         import Artty from './src/index.js';
         window.Artty = Artty;
+        if(import.meta.env.MODE !== 'production'){
+            window.App = Artty.createApp({ 
+                show: true,
+                message: 'hello',
+                count: 1,
+                home: {
+                    bgRed: true
+                },
+                alert(count){
+                    console.log(count)
+                }
+            })
+            App.sync('app')
+        }
     </script>
 </body>
 </html>

@@ -10,7 +10,7 @@
   "author": "Mr.SIRAWIT PRATOOMSUWAN <48322519+bronystylecrazy@users.noreply.github.com>",
   "license": "MIT",
   "scripts": {
-    "build": "vite build",
+    "build": "vite build --mode production",
     "dev": "vite",
     "preview": "vite preview"
   },
