@@ -20,8 +20,8 @@ export const diffAttribute = (vNewNode,vOldAttr, vNewAttr) => {
     for (const [k, v] of Object.entries(vNewAttr)) {
        patches.push($node => {
             try{
-                if(k.trim().toLowerCase() === 'value')
-                    $node.value = v;
+                if(['value','checked'].includes(k.trim().toLowerCase()))
+                    $node[k] = v;
                 else $node.setAttribute(k, v);
             }catch(e){ 
                 // console.error(`invalid directive name ${k}`, e.message);
@@ -93,6 +93,9 @@ export const diffChildren = (vOldChildren, vNewChildren) => {
 };
 
 export const diff = (vOldNode, vNewNode) => {
+
+
+
     if(vNewNode === undefined){
         return $node => {
             $node.remove();
@@ -112,7 +115,7 @@ export const diff = (vOldNode, vNewNode) => {
         }
     }
 
-    if(vOldNode.tagName !== vNewNode.tagName){
+    if(vOldNode.tag !== vNewNode.tag){
         return $node => {
             const $newNode = generate(vNewNode);
             $node.replaceWith($newNode);

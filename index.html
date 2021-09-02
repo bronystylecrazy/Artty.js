@@ -10,13 +10,12 @@
     <div id="app">
         <div>
             <h2>{message}</h2>
-            <h2>{show}</h2>
             <input type="checkbox" (model)="show">
-            <input type="text" (model)="message">
-            <input type="text" (model)="message">
-            <input type="text" (model)="message">
-            <input type="text" (model)="message">
-            <h1>{ count}</h1>
+            <input (if)="show" type="text" (model)="message" placeholder="{message}">
+            <input (if)="show" type="text" (model)="message" placeholder="{message}">
+            <input (if)="show" type="text" (model)="message" placeholder="{message}">
+            <input (if)="show" type="text" (model)="message" placeholder="{message}">
+            <h1>{ count }</h1>
             <button (for)="x in count" @click="alert(x)"> click {x}</button>
         </div>
         <input type="number" (model)="count"/>

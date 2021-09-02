@@ -32,11 +32,11 @@ export const parseDirective = ($node, ctx = {}) => {
     if($node.hasAttribute('(if)')){
         var $statement = $node.getAttribute('(if)');
         $node.removeAttribute('(if)')
-        var $elseNode = $node.nextElementSibling;
-        if((typeof $elseNode !== 'undefined' || typeof $elseNode !== 'null') && $elseNode.hasAttribute('(else)')){
-            $elseNode.setAttribute('data-elsed', true);
-            return `((${parseExpression($statement,ctx)}) ? ${parseFromElement($node,ctx)} : ${parseFromElement($elseNode,ctx)})`;
-        }
+        // var $elseNode = $node.nextElementSibling;
+        // if((typeof $elseNode !== 'undefined' || typeof $elseNode !== 'null') && $elseNode.hasAttribute('(else)')){
+        //     $elseNode.setAttribute('data-elsed', true);
+        //     return `((${parseExpression($statement,ctx)}) ? ${parseFromElement($node,ctx)} : ${parseFromElement($elseNode,ctx)})`;
+        // }
         return `((${parseExpression($statement,ctx)}) ? ${parseFromElement($node,ctx)} : ${parseFromElement()})`;
     }
 
@@ -157,8 +157,9 @@ export const parseOptions = ($node, ctx = {}) => {
             }
         }
     }
-
-    return `{ attrs: {${attrs.join(',')}}, on: {${on.join(',')}}}`;
+    var attr = `attrs: {${attrs.join(',')}}`;
+    var on = `on: {${on.join(',')}}`;
+    return `{${attr}, ${on} }`;
 }
 
 export const parseMethod = (value, ctx) => {
