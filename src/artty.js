@@ -1,21 +1,21 @@
 import h from './h';
 import { diff } from './diff';
 import { generate } from './generator';
-import {reactive} from './reactive';
-import hyperactiv from 'hyperactiv'
 import { parse } from './parser';
-const { observe, computed } = hyperactiv;
+import Reactive from './reactive';
+export const reactive = Reactive;
 
 export const createApp = (state) => {
     return ({
-        state: observe(state),
+        state: reactive.observe(state),
         vnodes: [],
         template: "",
         $el: null,
         updateList: [],
         sync($s){
-            this.$el = document.querySelector($s);
+            this.$el = document.getElementById($s);
             this.template = `return h('div',${parse(this.$el)})`;
+            console.log(this.template)
             const [_,__] = [this.state,this.utils];
             let vApp = new Function('h','_','__',this.template)(h,_,__);
             let $app = generate(vApp);

@@ -9,13 +9,24 @@
 <body>
     <div id="app" (cloak)>
         <h1>HelloWorld</h1>
-        <p (for)="n in id" :id="n + n.toString()" @click="">{n}</p>
+        <p (for)="n in count" :id="n + n.toString()">{n}</p>
+        <b>Hello, <span>{message}</span></b>
     </div>
 
     
     <!-- <textarea id="html" style="max-width: 49%; float: left;width: 100%; height: 100px;"></textarea>
     <textarea id="js"  style="max-width: 49%;float: left;  width: 100%; height: 100px;"></textarea>
      -->
-    <script type="module" src="./src/index.js"></script>
+    <!-- <script type="module" src="./src/index.js"></script> -->
+    <script type="module">
+        import Artty from './src/index.js';
+        const App = window.Artty.createApp({
+            /* state goes here */
+            count: 1,
+            message: 'Sirawit',
+            show: true,
+            people: [{id: 1, name: 'Sirawit'}, {id: 2, name: 'Rossarin'}]
+        }).sync("app"); // mount to div#app
+    </script>
 </body>
 </html>

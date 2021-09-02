@@ -2,19 +2,20 @@
   "name": "artty.js",
   "version": "1.0.0",
   "description": "Simple lightweight Artty Framework",
-  "main": "dist",
-  "type": "module",
-  "source": "src/index.js",
+  "publishConfig": {
+    "source": "src/index.js",
+    "main": "dist/artty.js"
+  },
   "repository": "https://github.com/bronystylecrazy/Artty.js.git",
   "author": "Mr.SIRAWIT PRATOOMSUWAN <48322519+bronystylecrazy@users.noreply.github.com>",
   "license": "MIT",
   "scripts": {
-    "build": "microbundle src/*.js",
-    "dev": "vite"
+    "build": "vite build",
+    "dev": "vite",
+    "preview": "vite preview"
   },
   "dependencies": {
     "hyperactiv": "^0.8.6",
-    "microbundle": "^0.13.3",
     "vite": "^2.5.1"
   }
 }

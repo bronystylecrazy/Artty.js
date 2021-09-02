@@ -1,2 +1,0 @@
-function r(){return(r=Object.assign||function(r){for(var t=1;t<arguments.length;t++){var n=arguments[t];for(var e in n)Object.prototype.hasOwnProperty.call(n,e)&&(r[e]=n[e])}return r}).apply(this,arguments)}function t(r,t){var n=r[t];Object.defineProperty(r,t,{get:function(){return n},set:function(r){n!==r&&(n=r)}})}exports.observe=t,exports.reactive=function(n){var e=r({},n);for(var o in e)e.hasOwnProperty(o)&&t.bind(this,e,o);return e};
-//# sourceMappingURL=reactive.cjs.map

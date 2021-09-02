@@ -40,6 +40,7 @@ export const parseDirective = ($node, ctx = {}) => {
         return `((${parseExpression($statement,ctx)}) ? ${parseFromElement($node,ctx)} : ${parseFromElement()})`;
     }
 
+
     return h($node, ctx);
 }
 
@@ -53,6 +54,7 @@ export const parseFromElement = ($node, ctx = {}) => {
 }
 
 export const parseText = ($text, ctx = {}) => {
+    console.log($text)
     var text = $text.replaceAll("\n","\\n");
     var parts = [];
     var t = "";
