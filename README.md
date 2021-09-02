@@ -63,7 +63,7 @@ App
 ```
 
 
-## Reactivity
+## Hyperactiv Reactivity
 - too lazy for me to manage reactivity
 - so I decided to use [Hyperactiv](https://github.com/elbywan/hyperactiv) to manage reactivity 
 - you can use hyperactiv too!
