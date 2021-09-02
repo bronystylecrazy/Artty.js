@@ -1,7 +1,5 @@
 import * as Artty from './artty';
 
-window.Artty = Artty;
-
 export default Artty;
 
 // app.render(function(h){

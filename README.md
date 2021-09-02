@@ -27,6 +27,8 @@ const App = Artty.createApp({
     message: 'Sirawit',
     show: true,
     people: [{id: 1, name: 'Sirawit'}, {id: 2, name: 'Rossarin'}]
-}).sync("#app"); // mount to div#app
+}).sync("#app"); // mount to #app
 
+
+App.state.count++; // can change the state!
 ```
