@@ -1,11 +1,16 @@
 # Artty.js
-Simple lightweight Artty Library
+Simple lightweight Artty Library, the purpose is to simulate virtual dom and try to make Vue - React clone for education purposes.
 - Very fucking simple library
 - Very lightweight because it's almost nothing
-- Stupid diff algorithm and reactive
-## Import CDN here:
+- Stupid and too slow diff algorithm
+## Import script here:
 ```html
-<script src="https://raw.githubusercontent.com/bronystylecrazy/Artty.js/main/dist/artty.js.umd.js"></script>
+<script src="./dist/artty.js"></script>
+```
+or using module import
+```js
+import Artty from './dist/artty.js'
+import { createApp } from './dist/artty.js'
 ```
 ## In HTML file:
 ```html
@@ -55,4 +60,39 @@ App
 .unmounted()
 .destroyed()
 .sync('#app')
+```
+
+
+## Reactivity
+- too lazy for me to manage reactivity
+- so I decided to use [Hyperactiv](https://github.com/elbywan/hyperactiv) to manage reactivity 
+- you can use hyperactiv too!
+```js
+const { observe, computed } = Artty.hyperactiv;
+
+// This object is observed.
+const observed = observe({
+    a: 1,
+    b: 2,
+    c: 0
+})
+
+// Calling computed(...) runs the function and memorize its dependencies.
+// Here, the function depends on properties 'a' and 'b'.
+computed(() => {
+    const { a, b } = observed
+    console.log(`a + b = ${a + b}`)
+})
+// Prints: a + b = 3
+
+// Whenever properties 'a' or 'b' are mutated…
+observed.a = 2
+// The function will automagically be called.
+// Prints: a + b = 4
+
+observed.b = 3
+// Prints: a + b = 5
+
+observed.c = 1
+// Nothing depends on 'c', so nothing will happen.
 ```

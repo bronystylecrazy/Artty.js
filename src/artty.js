@@ -2,8 +2,8 @@ import h from './h';
 import { diff } from './diff';
 import { generate } from './generator';
 import { parse } from './parser';
-import Reactive from './reactive';
-export const reactive = Reactive;
+import reactive from './reactive';
+export const hyperactiv = reactive;
 
 export const createApp = (state) => {
     return ({
