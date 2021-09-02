@@ -32,3 +32,27 @@ const App = Artty.createApp({
 
 App.state.count++; // can change the state!
 ```
+## Fucking simple life-cycle hooks ever
+- need to place before **sync** function!
+```js
+App.<name>(function(vm){
+    this.state.message = "Hello World"; // state can be changed through here
+    vm.state.message = "Hello World"; // this too when you're using arrow function
+});
+
+App.created(); // when app is created
+App.mounted(); // when app is mounted
+App.updated(); // when app is updated
+App.unmouted(); // when app is unmounted
+App.destroyed(); // when app is destroyed
+
+
+/* It can be chained together like this: */
+App
+.created()
+.mounted()
+.updated()
+.unmounted()
+.destroyed()
+.sync('#app')
+```
