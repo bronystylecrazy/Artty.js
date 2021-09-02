@@ -6,7 +6,7 @@ import {
 } from './tools'
 import { data } from './data'
 import { enqueue } from './batcher'
-
+import { computed } from './computed';
 const { observersMap, computedStack, computedDependenciesTracker } = data
 
 export function observe(obj, options = {}) {
@@ -160,4 +160,4 @@ export function observe(obj, options = {}) {
     return proxy
 }
 
-export default { observe };
+export default { observe, computed };

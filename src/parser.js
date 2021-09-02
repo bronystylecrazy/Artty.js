@@ -13,7 +13,6 @@ export const parse = ($target, d = {}) => {
 }
 
 export const h = ($node, ctx = {}) => {
-    // console.log('context', ctx);
     if(typeof $node === "undefined" || typeof $node === 'null') return `h()`;
     return `h('${$node.tagName}',${parseOptions($node,ctx)},${parse($node,ctx)})`
 };
@@ -54,7 +53,6 @@ export const parseFromElement = ($node, ctx = {}) => {
 }
 
 export const parseText = ($text, ctx = {}) => {
-    console.log($text)
     var text = $text.replaceAll("\n","\\n");
     var parts = [];
     var t = "";
@@ -81,7 +79,6 @@ export const parseText = ($text, ctx = {}) => {
 }
 
 export const parseExpression = (e, ctx = {}) => {
-    // console.log('exp ', ctx)
     var exp = e || '';
     var regex = /([a-zA-Z_$.][a-zA-Z_$0-9.]*)/igm;
     var $$ = exp.matchAll(regex);
@@ -93,11 +90,6 @@ export const parseExpression = (e, ctx = {}) => {
             exp = exp.substring(0,pos) + exp.substring(pos).replace(variable.split('.')[0],`(_.${variable.split('.')[0]} || ${variable.split('.')[0]})`);
         }
     }
-    // for(var $ of $$){
-    //     if((typeof window[($.split('.')[0] || $)] === 'undefined')){
-    //         console.log($$)
-    //     }
-    // }
     return exp;
 }
 

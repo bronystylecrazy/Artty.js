@@ -1,5 +1,5 @@
 export const generate = (vNode) => {
-    if(typeof vNode === 'string') return document.createTextNode('dfsdfsd');
+    if(typeof vNode === 'string') return document.createTextNode(vNode);
     return generateElement(vNode);
 };
 

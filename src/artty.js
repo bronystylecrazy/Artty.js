@@ -11,15 +11,30 @@ export const createApp = (state) => {
         vnodes: [],
         template: "",
         $el: null,
-        updateList: [],
+        $event: {
+            created: [],
+            mounted: [],
+            updated: [],
+            unmounted:[]
+        },
+        $emit(evtName,ctx){
+            if(evtName in this.$event){
+                this.$event[evtName].forEach(e => e.call(ctx.state, ctx.state));
+                return this;
+            }
+            this.$event[evtName] = [];
+            this.$event[evtName].forEach(e => e.call(ctx.state, ctx.state));
+            return this;
+        },
         sync($s){
             this.$el = document.getElementById($s);
             this.template = `return h('div',${parse(this.$el)})`;
-            console.log(this.template)
+            this.$emit('created',this);
             const [_,__] = [this.state,this.utils];
             let vApp = new Function('h','_','__',this.template)(h,_,__);
             let $app = generate(vApp);
             let $rootEl = this.mount($app,this.$el);
+            this.$emit('mounted',this);
             this.state.__handler = (a,b,c,d) => {
                 const [_,__] = [this.state,this.utils];
                 let vNewApp = new Function('h','_','__',this.template)(h,_,__);
@@ -27,21 +42,21 @@ export const createApp = (state) => {
                 $rootEl = patch($rootEl);
                 vApp = vNewApp;
                 this.vnodes = vApp;
+                this.$emit('updated',this);
             }
             return this;
         },
-        update(){
-            for(var v of this.updateList) v(this.state);
-            this.$el.removeAttribute('(cloak)');
+        updated(cb){
+            this.$event.updated.push(cb);
+            return this;
         },
-        render(cb){
-            // this.nextTick((state) => {
-                
-            // });
-            // return this;
+        created(cb){
+            this.$event.created.push(cb);
+            return this;
         },
-        nextTick(cb){
-            this.updateList.push(cb);
+        mounted(cb){
+            this.$event.mounted.push(cb);
+            return this;
         },
         mount($node,$el){
             $el.replaceWith($node);
