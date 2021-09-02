@@ -8,6 +8,7 @@ export default function build(options = { dist: './dist/assets/', target: './dis
                 if(err) throw err;
                 files.forEach(file => {
                   fs.copyFileSync(options.dist + file,options.target + 'artty.js');
+                  fs.copyFileSync(options.dist + file,'C:\\Users\\ASUS\\Desktop\\lib\\artty.js');
                 });
             });
         }

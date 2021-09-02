@@ -19,11 +19,11 @@ export const createApp = (state) => {
         },
         $emit(evtName,ctx){
             if(evtName in this.$event){
-                this.$event[evtName].forEach(e => e.call(ctx.state, ctx.state));
+                this.$event[evtName].forEach(e => e.call(ctx, ctx));
                 return this;
             }
             this.$event[evtName] = [];
-            this.$event[evtName].forEach(e => e.call(ctx.state, ctx.state));
+            this.$event[evtName].forEach(e => e.call(ctx, ctx));
             return this;
         },
         sync($s){
@@ -35,7 +35,7 @@ export const createApp = (state) => {
             let $app = generate(vApp);
             let $rootEl = this.mount($app,this.$el);
             this.$emit('mounted',this);
-            this.state.__handler = (a,b,c,d) => {
+            reactive.computed(() => {
                 const [_,__] = [this.state,this.utils];
                 let vNewApp = new Function('h','_','__',this.template)(h,_,__);
                 const patch = diff(vApp,vNewApp);
@@ -43,7 +43,7 @@ export const createApp = (state) => {
                 vApp = vNewApp;
                 this.vnodes = vApp;
                 this.$emit('updated',this);
-            }
+            });
             return this;
         },
         updated(cb){
