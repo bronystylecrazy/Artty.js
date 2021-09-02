@@ -8,12 +8,18 @@
 </head>
 <body>
     <div id="app">
-        <h1 (if)="show">{message} {count}</h1>
-        <h2 (else)>hiii</h2>
-        <p (for)="n in count">asdasd {n}</p>
-        <b :class='{bg: show}'>Hellooo </b>
-        <input> 
-        <button (for)="x in 4" @click="alert(x)"> click {x}</button>
+        <div>
+            <h2>{message}</h2>
+            <h2>{show}</h2>
+            <input type="checkbox" (model)="show">
+            <input type="text" (model)="message">
+            <input type="text" (model)="message">
+            <input type="text" (model)="message">
+            <input type="text" (model)="message">
+            <h1>{ count}</h1>
+            <button (for)="x in count" @click="alert(x)"> click {x}</button>
+        </div>
+        <input type="number" (model)="count"/>
     </div>
     <script type="module" src="./src/index.js"></script>
     <script type="module">

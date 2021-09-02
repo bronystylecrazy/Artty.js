@@ -20,7 +20,9 @@ export const diffAttribute = (vNewNode,vOldAttr, vNewAttr) => {
     for (const [k, v] of Object.entries(vNewAttr)) {
        patches.push($node => {
             try{
-                $node.setAttribute(k, v);
+                if(k.trim().toLowerCase() === 'value')
+                    $node.value = v;
+                else $node.setAttribute(k, v);
             }catch(e){ 
                 // console.error(`invalid directive name ${k}`, e.message);
             }

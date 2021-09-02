@@ -65,10 +65,12 @@ const createApp = (state) => {
         utils: {
             l(time, cb, n){
                 var h = [];
-                if(typeof time === 'number'){
-                    Array.from(Array(time).keys()).forEach((a,i) => {
-                        return h.push(cb.call({[n]: a},a,a))
-                    });
+                if(typeof time === 'string'){
+                    if(+time){
+                        Array.from(Array(Math.max(0,+time)).keys()).forEach((a,i) => {
+                            return h.push(cb.call({[n]: a},a,a))
+                        });
+                    }
                 }
                 if(Array.isArray(time)){
                     time.forEach((a,i) => h.push(cb.call({[n]: a},a, i)));

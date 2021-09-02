@@ -17,6 +17,7 @@ export const h = ($node, ctx = {}) => {
 };
 
 export const parseDirective = ($node, ctx = {}) => {
+
     if($node.hasAttribute('(for)')){
         var $statement = $node.getAttribute('(for)');
         $node.removeAttribute('(for)');
@@ -25,7 +26,7 @@ export const parseDirective = ($node, ctx = {}) => {
             return `__.l((${parseExpression($statement.trim(),ctx)}), () => ${parseFromElement($node,ctx)})`;
         var [l,r] = $statement.split(' in ');
         l = l.trim();
-        return `__.l((${parseExpression(r,ctx)}), function(${l}){ console.log('${$node.tagName}',${l}); return ${parseFromElement($node,ctx)}},'${l}')`;
+        return `__.l((${parseExpression(r,ctx)}), function(${l}){return ${parseFromElement($node,ctx)}},'${l}')`;
     }
 
     if($node.hasAttribute('(if)')){
@@ -38,7 +39,6 @@ export const parseDirective = ($node, ctx = {}) => {
         }
         return `((${parseExpression($statement,ctx)}) ? ${parseFromElement($node,ctx)} : ${parseFromElement()})`;
     }
-
 
     return h($node, ctx);
 }
@@ -105,8 +105,11 @@ export const parseExpression = (e, ctx = {}, wrap = false) => {
             for(var i = 0; i < pos; i++){
                 if(['\`','\'','\"'].includes(exp[i])) isInString = !isInString;
             }
-            if(!isInString)
-                exp = exp.substring(0,pos) + exp.substring(pos).replace(vname,`_.${vname}`);
+            if(!isInString){
+                if((typeof window[v] !== 'undefined')){
+                    exp = exp.substring(0,pos) + exp.substring(pos).replace(vname,`${vname}`);
+                }else exp = exp.substring(0,pos) + exp.substring(pos).replace(vname,`_.${vname}`);
+            }
         }
     }
     return exp;
@@ -131,6 +134,16 @@ export const parseOptions = ($node, ctx = {}) => {
 
     if($node.attributes.length > 0){
         for(var {name,value} of $node.attributes){
+            if(['input','select'].includes($node.tagName.toLowerCase()) && name.includes('(model)')){
+                var v = $node.getAttribute('type').trim().toLowerCase();
+                if(['checkbox'].includes(v))
+                    attrs.push(`checked: ${parseExpression(value.trim(),ctx,true)}`)
+                else
+                    attrs.push(`value: ${parseExpression(value.trim(),ctx,true)}`)
+                on.push(`'input': function($event){ ${parseExpression(value.trim(),ctx,true)} = $event.target.${['checkbox'].includes(v) ? 'checked' : 'value'}; }`);
+                continue;
+            }
+
             if(name.includes(':'))
                 attrs.push(`'${name.slice(1)}': __.a(${parseExpression(value,ctx)})`);
             else if (name.includes('@')){
