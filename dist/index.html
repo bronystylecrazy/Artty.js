@@ -5,17 +5,16 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vite - Artty.js build</title>
-  <script type="module" crossorigin src="/assets/index.8cfe050f.js"></script>
+  <script type="module" crossorigin src="/assets/index.ad1ef05a.js"></script>
   </head>
 <body>
     <div id="app">
-            <h2>{message} {count}</h2>
+            <h2>{message} {count} {hello}</h2>
             <div>
-                <p (for)="n in count" (key)="n">{message} {n}</p>
+                <p (for)="n in arr">hell{n}</p>
             </div>
             <input type="text" (model)="message">
-            <button @click="count++">click + 1</button>
-            <button @click="count--">click - 1</button>
+            <button @click="alert">Add</button>
     </div>
     
     
