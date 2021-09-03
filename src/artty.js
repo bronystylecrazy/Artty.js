@@ -29,7 +29,7 @@ const createApp = (state) => {
         },
         sync($s){
             this.$el = document.getElementById($s);
-            this.template = `let v={};return h('div',${parser.parse(this.$el,this.state)})`;
+            this.template = `let v={},$state=_;return h('div',${parser.parse(this.$el,this.state)})`;
             this.$emit('created',this);
             const [_,__] = [this.state,this.utils];
             let vApp = new Function('h','_','__',...Object.keys(_),this.template)(h,_,__,...Object.values(_));

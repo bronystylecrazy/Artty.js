@@ -1,5 +1,3 @@
-import { nanoid } from 'nanoid';
-
 export const parse = ($target, ctx = {}) => {
     var vnode = [];
     for(var $childNode of $target.childNodes){
@@ -132,7 +130,7 @@ export const parseReactive = (parts, ctx = {}) => {
 export const parseOptions = ($node, ctx = {}) => {
     var attrs = [];
     var on = [];
-    var key = `'${nanoid(4)}'`;
+    var key = `null`;
 
     if($node.attributes.length > 0){
         for(var {name,value} of $node.attributes){
@@ -170,7 +168,9 @@ export const parseOptions = ($node, ctx = {}) => {
 }
 
 export const parseMethod = (value, ctx) => {
-    return `function($event){ return ${parseExpression(value,ctx,true)}}`;
+    var call = '';
+    if(!['('].includes(value.trim()) || ![')'].includes(value.trim())) call = '.call($state,$state)'
+    return `function($event){ return ${parseExpression(value,ctx,true)}${call}}`;
 };
 
 export const parseDOM = ($html, ctx = {}) => {

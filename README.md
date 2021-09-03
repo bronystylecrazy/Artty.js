@@ -16,11 +16,26 @@ import { createApp } from './dist/artty.js'
 ```html
 <div id="app">
     <h1>Hello, { message }</h1> <!-- { expression } uses to empower html-->
+    <p>{ MESSAGE }</p>
+
     <h2 (if)="show">Show message</h2> <!-- if-else directives-->
     <h4 (else)>Hide message</h4>
 
-    <!-- loop through -->
-    <p (for)="person in people">{person.id} {person.name}</p>
+    <!-- loop through, I suggest that put it in div because of the stupid diff algotithm-->
+    <div>
+        <p (for)="person in people">{person.id} {person.name}</p>
+    </div>
+
+    <!-- method -->
+    <button @click="click">
+    <button @click="send($state, show)"> <!-- this is fine, but can not use 'this' as state variable--->
+    <button @click="send.call($state, $state, show)"> <!-- method with state parameter and bind state to 'this' -->
+
+    <!-- model -->
+    <input type="text" (model)="simpleInput"/>
+    <input type="checkbox" (model)="simpleCheckbox"/>
+    <b>Input value: { simpleInput }</b>
+    <b>Checkbox value: { simpleCheckbox }</b>
 </div>
 ```
 
@@ -31,12 +46,34 @@ const App = Artty.createApp({
     count: 1,
     message: 'Sirawit',
     show: true,
-    people: [{id: 1, name: 'Sirawit'}, {id: 2, name: 'Rossarin'}]
-}).sync("#app"); // mount to #app
+    people: [{id: 1, name: 'Sirawit'}, {id: 2, name: 'Rossarin'}],
+    sampleInput: "hello",
+    sampleCheckBox: true,
+    click(){
+        this.show = !show; // state can be changed here
+    },
+    send($state, show){
+        $state.message = 'fixed message';
+        $state.show = !show;
+        $state.show = !state.show;
+    },
+    get MESSAGE(){ // customer property get
+        return this.message.toUpperCase();
+    }
+})
+
+App.sync("#app"); // mount to #app
 
 
 App.state.count++; // can change the state!
 ```
+
+## Get compiled virtual DOM
+```js
+App.template
+```
+
+
 ## Fucking simple life-cycle hooks ever
 - need to place before **sync** function!
 ```js

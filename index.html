@@ -8,32 +8,17 @@
 </head>
 <body>
     <div id="app">
-            <h2>{message} {count}</h2>
+            <h2>{message} {count} {hello}</h2>
             <div>
-                <p (for)="n in count" (key)="n">{message} {n}</p>
+                <p (for)="n in arr">hell{n}</p>
             </div>
             <input type="text" (model)="message">
-            <button @click="count++">click + 1</button>
-            <button @click="count--">click - 1</button>
+            <button @click="alert">Add</button>
     </div>
     <script type="module" src="./src/index.js"></script>
     <script type="module">
         import Artty from './src/index.js';
         window.Artty = Artty;
-        if(import.meta.env.MODE !== 'production'){
-            window.App = Artty.createApp({ 
-                show: true,
-                message: 'hello',
-                count: 6,
-                home: {
-                    bgRed: true
-                },
-                alert(count){
-                    console.log(count)
-                }
-            })
-            App.sync('app')
-        }
     </script>
 </body>
 </html>
