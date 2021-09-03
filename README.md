@@ -16,11 +16,16 @@ import { createApp } from './dist/artty.js'
 ```html
 <div id="app">
     <h1>Hello, { message }</h1> <!-- { expression } uses to empower html-->
-    <p>{ MESSAGE }</p>
+    <p>{ MESSAGE }</p> <!-- computed property here, can be used normally -->
+
+    <p class="{myClass}">Hello class</p> <!-- bind to any attribute -->
+    <p :class="myClass">Hello class, again!</p> <!-- this is also fine! -->
+    <p style="{myStyle}">hello</p> <!-- if it is style, it will be automatically tranform to css inline style -->
+    <p :style="myStyle">hello</p> 
+
 
     <h2 (if)="show">Show message</h2> <!-- if-else directives-->
     <h4 (else)>Hide message</h4>
-
     <!-- loop through, I suggest that put it in div because of the stupid diff algotithm-->
     <div>
         <p (for)="person in people">{person.id} {person.name}</p>
@@ -46,9 +51,12 @@ const App = Artty.createApp({
     count: 1,
     message: 'Sirawit',
     show: true,
+    /* for (for) */
     people: [{id: 1, name: 'Sirawit'}, {id: 2, name: 'Rossarin'}],
+    /*for (model)*/
     sampleInput: "hello",
     sampleCheckBox: true,
+    /* for methods*/
     click(){
         this.show = !show; // state can be changed here
     },
@@ -57,9 +65,13 @@ const App = Artty.createApp({
         $state.show = !show;
         $state.show = !state.show;
     },
+    /* for computed */
     get MESSAGE(){ // customer property get
         return this.message.toUpperCase();
     }
+    /* class */
+    myClass: { bgRed: true, textRed: false},
+    myStyle: {background: 'red', padding: '50px'}
 })
 
 App.sync("#app"); // mount to #app
