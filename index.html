@@ -8,9 +8,13 @@
 </head>
 <body>
     <div id="app">
-            <h2>{message}</h2>
-            <p (for)="n in message.length" (key)="n">{message}</p>
+            <h2>{message} {count}</h2>
+            <div>
+                <p (for)="n in count" (key)="n">{message} {n}</p>
+            </div>
             <input type="text" (model)="message">
+            <button @click="count++">click + 1</button>
+            <button @click="count--">click - 1</button>
     </div>
     <script type="module" src="./src/index.js"></script>
     <script type="module">
@@ -20,7 +24,7 @@
             window.App = Artty.createApp({ 
                 show: true,
                 message: 'hello',
-                count: 1,
+                count: 6,
                 home: {
                     bgRed: true
                 },

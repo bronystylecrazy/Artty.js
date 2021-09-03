@@ -22,6 +22,7 @@ export const diffEvent = (vNode,vOldOn, vNewOn) => {
 
     for (const [k, v] of Object.entries(vNewOn)) {
         patches.push($node => {
+            removeAllListeners($node,k);
             addListener($node,k,function($event){
                 var c = v($event);
                 if(typeof c === 'function'){
@@ -82,6 +83,35 @@ export const diffChildren = (vOldChildren, vNewChildren) => {
         patches.push(diff(oldVChild, newVChild));
     }
 
+    // console.log(vOldChildren, vNewChildren)
+
+    //     var cached = {};
+    //     for(var i = 0; i < vNewChildren.length; i++){
+    //         if(typeof vNewChildren[i] === 'string') continue;
+    //         cached[vNewChildren[i].opts.key] = false;
+    //     }
+
+    //     vOldChildren.reverse().forEach((v,i) => {
+    //         if(typeof v === 'string') return;
+    //         if(!(v.opts.key in cached)){
+    //             removalPatches.push($node => {
+    //                 $node.childNodes[i].remove();
+    //                 return $node;
+    //             });
+    //         }
+    //     })
+        // for (var i = vOldChildren.length-1; i >= 0 ; i--) {
+        //     if(typeof vOldChildren[i] === 'string') continue;
+        //     if(!(vOldChildren[i].opts.key in cached)){
+        //         console.log('remove')
+        //         removalPatches.push($node => {
+        //             console.log($node.childNodes);
+        //             $node.childNodes[0].remove();
+        //             return $node;
+        //         });
+        //     }
+        // }
+    //     console.log(vOldChildren,vNewChildren)
     if(vOldChildren.length < vNewChildren.length){
         for (const additionalChild of vNewChildren.slice(vOldChildren.length)) {
             additionalPatches.push($node => {
@@ -98,6 +128,20 @@ export const diffChildren = (vOldChildren, vNewChildren) => {
             });
         }
     }
+
+
+        // var cached_id = {};
+        // for(var i = 0; i < vNewChildren.length; i++){
+        //     cached_id[vNewChildren[i].key] = true;
+        // }
+        // for(var i = 0; i < vOldChildren.length; i++){
+        //     if(!(vOldChildren.key in cached_id)){
+        //         removalPatches.push($node => {
+        //             $node.removeChild($node.childNodes[i]);
+        //             return $node;
+        //         });
+        //     }
+        // }
 
     return $parent => {
 

@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "hyperactiv": "^0.8.6",
+    "nanoid": "^3.1.25",
     "vite": "^2.5.1"
   }
 }
