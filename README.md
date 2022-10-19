@@ -1,8 +1,12 @@
 # Artty.js
-Simple lightweight Artty Library, the purpose is to simulate virtual dom and try to make Vue - React clone for education purposes.
-- Very fucking simple library
-- Very lightweight because it's almost nothing
-- Stupid and too slow diff algorithm
+React clone for education purposes.
+Simple lightweight VDOM Library, the purpose is to simulate virtual dom and try to understand React.js under the hood.
+
+- Simple library written from scratch
+- Very lightweight 3KB because it's almost nothing
+- However, it's still having redundant, unpredictable, and overhead diffing algorithm
+- Will be introduce hooks such as useState, useEffect, useMemo in future (Not now.. unfortunately)
+
 ## Import script here:
 ```html
 <script src="./dist/artty.js"></script>
