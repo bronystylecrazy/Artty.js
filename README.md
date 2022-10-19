@@ -5,7 +5,7 @@ Simple lightweight VDOM Library, the purpose is to simulate virtual dom and try 
 - Simple library written from scratch
 - Very lightweight 3KB because it's almost nothing
 - However, it's still having redundant, unpredictable, and overhead diffing algorithm
-- Will be introduce hooks such as useState, useEffect, useMemo in future (Not now.. unfortunately)
+- Will introduce hooks such as useState, useEffect, useMemo in future (Not now.. unfortunately)
 
 ## Import script here:
 ```html
