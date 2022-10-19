@@ -30,7 +30,7 @@ import { createApp } from './dist/artty.js'
 
     <h2 (if)="show">Show message</h2> <!-- if-else directives-->
     <h4 (else)>Hide message</h4>
-    <!-- loop through, I suggest that put it in div because of the stupid diff algotithm-->
+    <!-- loop through, I suggest that put it in div because of the stupid diff algorithm-->
     <div>
         <p (for)="person in people">{person.id} {person.name}</p>
     </div>
